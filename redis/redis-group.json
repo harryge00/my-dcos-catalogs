@@ -1,0 +1,115 @@
+{
+    "id":"/redis",
+    "apps":[
+    	{
+		  "id": "/redis/master",
+		  "instances": 1,
+		  "container": {
+		    "type": "MESOS",
+		    "volumes": [
+		      {
+		        "persistent": {
+		          "size": 1024
+		        },
+		        "mode": "RW",
+		        "containerPath": "data"
+		      }
+		    ],
+		    "docker": {
+		      "image": "redis:4.0.11"
+		    },
+		    "portMappings": [
+		      {
+		        "containerPort": 6379,
+		        "hostPort": 0,
+		        "labels": {
+		          "VIP_0": "/redis/master:6379"
+		        },
+		        "protocol": "tcp",
+		        "name": "client"
+		      },
+		      {
+		        "containerPort": 16379,
+		        "hostPort": 0,
+		        "labels": {
+		          "VIP_1": "/redis/master:16379"
+		        },
+		        "protocol": "tcp",
+		        "name": "gossip"
+		      }
+		    ]
+		  },
+		  "cpus": 1,
+		  "mem": 1024,
+		  "requirePorts": false,
+		  "networks": [
+		    {
+		      "mode": "container/bridge"
+		    }
+		  ],
+		  "healthChecks": [],
+		  "fetch": [
+		    {
+		      "uri": "https://raw.githubusercontent.com/harryge00/my-dcos-catalogs/master/redis/master.conf"
+		    }
+		  ],
+		  "constraints": [],
+		  "cmd": "redis-server /mnt/mesos/sandbox/master.conf"
+		},
+		{
+		  "id": "/redis/slave",
+		  "container": {
+		    "type": "MESOS",
+		    "volumes": [
+		      {
+		        "persistent": {
+		          "size": 1024
+		        },
+		        "mode": "RW",
+		        "containerPath": "data"
+		      }
+		    ],
+		    "docker": {
+		      "image": "redis:4.0.11"
+		    },
+		    "portMappings": [
+		      {
+		        "containerPort": 6379,
+		        "hostPort": 0,
+		        "labels": {
+		          "VIP_0": "/redis/slave:6379"
+		        },
+		        "protocol": "tcp",
+		        "name": "client"
+		      },
+		      {
+		        "containerPort": 16379,
+		        "hostPort": 0,
+		        "labels": {
+		          "VIP_1": "/redis/slave:16379"
+		        },
+		        "protocol": "tcp",
+		        "name": "gossip"
+		      }
+		    ]
+		  },
+		  "cpus": 1,
+		  "mem": 1024,
+		  "requirePorts": false,
+		  "networks": [
+		    {
+		      "mode": "container/bridge"
+		    }
+		  ],
+		  "healthChecks": [],
+		  "fetch": [
+		    {
+		      "uri": "https://raw.githubusercontent.com/harryge00/my-dcos-catalogs/master/redis/slave.conf"
+		    }
+		  ],
+		  "constraints": [],
+		  "instances": 3,
+		  "cmd": "redis-server /mnt/mesos/sandbox/slave.conf"
+		}
+    ]
+}

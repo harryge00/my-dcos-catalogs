@@ -1,0 +1,58 @@
+{
+  "id": "/redis-master",
+  "container": {
+    "portMappings": [
+      {
+        "containerPort": 6379,
+        "hostPort": 0,
+        "labels": {
+          "VIP_0": "/redis-master:6379"
+        },
+        "protocol": "tcp",
+        "name": "client"
+      },
+      {
+        "containerPort": 16379,
+        "hostPort": 0,
+        "labels": {
+          "VIP_1": "/redis-master:16379"
+        },
+        "protocol": "tcp",
+        "name": "gossip"
+      }
+    ],
+    "type": "MESOS",
+    "volumes": [
+      {
+        "persistent": {
+          "type": "mount",
+          "size": 1024,
+          "constraints": [],
+          "profileName": "redis-data"
+        },
+        "mode": "RW",
+        "containerPath": "data"
+      }
+    ],
+    "docker": {
+      "image": "redis:4.0.11"
+    }
+  },
+  "cpus": 1,
+  "mem": 1024,
+  "requirePorts": false,
+  "networks": [
+    {
+      "mode": "container/bridge"
+    }
+  ],
+  "healthChecks": [],
+  "constraints": [],
+  "instances": 1,
+  "fetch": [
+    {
+      "uri": "https://raw.githubusercontent.com/harryge00/my-dcos-catalogs/master/redis/master.conf"
+    }
+  ],
+  "cmd": "redis-server /mnt/mesos/sandbox/master.conf"
+}
